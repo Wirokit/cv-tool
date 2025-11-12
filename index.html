@@ -1,0 +1,259 @@
+<!-- Base file created by Gemini AI -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV Tool</title>
+    <!-- 1. Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* 2. Add custom styling for the file input */
+      .card {
+        box-shadow: 0 0 20px 0 rgb(0 0 0 / 0.1), 0 0 20px 0 rgb(0 0 0 / 0.1);
+      }
+      .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        cursor: pointer;
+        ::-webkit-file-upload-button {
+          cursor: pointer;
+        }
+      }
+      .file-input-wrapper input[type="file"] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .file-input-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1.5rem;
+        border: 2px dashed #cbd5e1; /* gray-300 */
+        border-radius: 0.5rem; /* rounded-lg */
+        background-color: #f8fafc; /* gray-50 */
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      .file-input-wrapper:hover .file-input-label {
+        border-color: #3b82f6; /* blue-500 */
+        background-color: #eff6ff; /* blue-50 */
+      }
+      /* Style for when a file is selected */
+      .file-input-wrapper.file-selected .file-input-label {
+        border-color: #16a34a; /* green-600 */
+        background-color: #f0fdf4; /* green-50 */
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans antialiased">
+    <!-- Main Container -->
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <!-- Card -->
+      <div class="bg-white w-full max-w-lg p-8 rounded-xl card">
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <h1 class="text-3xl font-bold text-gray-800">PDF Processor</h1>
+          <p class="text-gray-500 mt-2">
+            Upload your PDF file to edit and get a new link.
+          </p>
+        </div>
+
+        <!-- 3. HTML Upload Form -->
+        <form id="upload-form" class="space-y-6">
+          <!-- File Input Area -->
+          <div id="file-wrapper" class="file-input-wrapper w-full">
+            <label
+              for="pdf-file"
+              id="file-label"
+              class="file-input-label text-gray-500"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-12 h-12 mr-3 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3"
+                />
+              </svg>
+              <div>
+                <span class="font-medium text-blue-600">Click to upload</span>
+                or drag and drop
+                <p id="file-name" class="text-sm text-gray-500 mt-1">
+                  PDF files only (max 50MB)
+                </p>
+              </div>
+            </label>
+            <input
+              type="file"
+              id="pdf-file"
+              name="file"
+              accept="application/pdf"
+              class="file-input"
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            id="submit-button"
+            class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200"
+          >
+            Upload and Process
+          </button>
+        </form>
+
+        <!-- 4. Result Area (for loading, success, or error) -->
+        <div id="result-container" class="mt-6 text-center hidden">
+          <!-- Loading Spinner -->
+          <div id="loading-spinner" class="hidden">
+            <svg
+              class="animate-spin h-8 w-8 text-blue-600 mx-auto"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <p class="text-gray-500 mt-2">
+              Processing your file, please wait...
+            </p>
+          </div>
+
+          <!-- Result Message -->
+          <div id="result-message"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. JavaScript Logic -->
+    <script>
+      const uploadForm = document.getElementById("upload-form");
+      const pdfFile = document.getElementById("pdf-file");
+      const fileNameDisplay = document.getElementById("file-name");
+      const fileWrapper = document.getElementById("file-wrapper");
+      const fileLabel = document.getElementById("file-label");
+
+      const resultContainer = document.getElementById("result-container");
+      const loadingSpinner = document.getElementById("loading-spinner");
+      const resultMessage = document.getElementById("result-message");
+      const submitButton = document.getElementById("submit-button");
+
+      // Update file name display on file selection
+      pdfFile.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          fileNameDisplay.textContent = file.name;
+          fileWrapper.classList.add("file-selected");
+          fileLabel.classList.add("border-green-600", "bg-green-50");
+        } else {
+          fileNameDisplay.textContent = "PDF files only (max 50MB)";
+          fileWrapper.classList.remove("file-selected");
+          fileLabel.classList.remove("border-green-600", "bg-green-50");
+        }
+      });
+
+      // Handle form submission
+      uploadForm.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        const file = pdfFile.files[0];
+        if (!file) {
+          displayMessage("Please select a PDF file to upload.", "error");
+          return;
+        }
+
+        // --- Start Loading State ---
+        submitButton.disabled = true;
+        submitButton.textContent = "Uploading...";
+        loadingSpinner.classList.remove("hidden");
+        resultContainer.classList.remove("hidden");
+        resultMessage.innerHTML = "";
+        // ---
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          // Post the file to the backend's /upload endpoint
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success && result.url) {
+            // Success! Display the new URL
+            const successHtml = `
+                        <p class="text-green-700 font-medium">File processed successfully!</p>
+                        <p class="text-gray-600 mt-2">Your new link is ready:</p>
+                        <a href="${result.url}" target="_blank" class="block bg-gray-100 text-blue-600 font-mono break-words p-3 rounded-md mt-2 hover:bg-gray-200">
+                            ${result.url}
+                        </a>
+                    `;
+            displayMessage(successHtml, "success");
+          } else {
+            // Handle backend error
+            displayMessage(
+              result.error || "An unknown error occurred on the server.",
+              "error"
+            );
+          }
+        } catch (error) {
+          // Handle network or fetch error
+          console.error("Upload Error:", error);
+          displayMessage(
+            "Failed to connect to the server. Please try again.",
+            "error"
+          );
+        } finally {
+          // --- End Loading State ---
+          submitButton.disabled = false;
+          submitButton.textContent = "Upload and Process";
+          loadingSpinner.classList.add("hidden");
+          // ---
+        }
+      });
+
+      // Helper function to display messages
+      function displayMessage(message, type) {
+        resultContainer.classList.remove("hidden");
+
+        if (type === "error") {
+          resultMessage.innerHTML = `<p class="text-red-600 font-medium">${message}</p>`;
+        } else {
+          resultMessage.innerHTML = message; // Assumes HTML for success
+        }
+      }
+    </script>
+  </body>
+</html>
