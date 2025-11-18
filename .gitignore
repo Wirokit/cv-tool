@@ -1,2 +1,6 @@
 processed_files
 uploads
+.env
+contact_info.json
+__pycache__
+my_cv.html

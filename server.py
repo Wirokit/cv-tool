@@ -1,29 +1,37 @@
+# Initial file by Gemini
 import os
 import uuid
-import subprocess
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+from google import genai
+from dotenv import load_dotenv
+from cv_generator import generate_professional_cv
 
-# --- Configuration ---
+# --- Environment ---
+load_dotenv()
 
-# 1. Create a Flask application
+# Create a Flask application
 app = Flask(__name__)
 
-# 2. Define upload and processed directories
+# Define upload and processed directories
 # os.path.dirname(__file__) gets the directory this script is in
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 PROCESSED_FOLDER = os.path.join(BASE_DIR, "processed_files")
 
-# 3. Ensure these directories exist
+# Ensure these directories exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
-# 4. (Optional) Set a max file size (e.g., 50MB)
+# Set a max file size (e.g., 50MB)
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
-# 5. Define allowed file extensions
+# Define allowed file extensions
 ALLOWED_EXTENSIONS = {"pdf"}
+
+# Create a Gemini client
+geminicli = genai.Client()
+prompt = open("prompt.txt", "r").read()
 
 
 def allowed_file(filename):
@@ -89,51 +97,31 @@ def upload_file():
 
         # 6. Generate a unique ID for the processed file
         file_id = str(uuid.uuid4())
-        processed_filename = f"{file_id}.pdf"
+        processed_filename = f"{file_id}.html"
         processed_filepath = os.path.join(PROCESSED_FOLDER, processed_filename)
 
-        # 7. --- !!! YOUR PDF PROCESSING LOGIC GOES HERE !!! ---
-        # This is where you call your command-line tool or Python script.
+        # 7. --- PDF PROCESSING LOGIC ---
         try:
-            # Example using a command-line tool like 'pdftk'
-            # This command is just a placeholder. Replace it with your actual command.
-            # For example, to stamp a watermark:
-            # ['pdftk', original_filepath, 'stamp', 'watermark.pdf', 'output', processed_filepath]
-
-            # As a simple placeholder, we'll just *copy* the file
-            # Replace this 'cp' command with your real command.
-            command = ["cp", original_filepath, processed_filepath]
-
-            # Run the command
-            subprocess.run(
-                command,
-                check=True,  # Raise an error if the command fails
-                timeout=30,  # Set a timeout (e.g., 30 seconds)
+            pdf_to_process = geminicli.files.upload(file=original_filepath)
+            response = geminicli.models.generate_content(
+                model="gemini-2.5-pro",
+                contents=[prompt, pdf_to_process],
+                config={
+                    "response_mime_type": "application/json",
+                },
             )
 
-            # --- End of your processing logic ---
+            result_json = response.text
 
-        except subprocess.CalledProcessError as e:
-            # The command failed
-            print(f"Subprocess failed: {e}")
-            return jsonify({"success": False, "error": "PDF processing failed."}), 500
+            generate_professional_cv(result_json, processed_filepath)
+
+            # --- End of PDF processing logic ---
+
         except FileNotFoundError:
             # The command (e.g., 'pdftk' or 'cp') wasn't found on the server
             print("Error: A command-line tool was not found.")
             return (
                 jsonify({"success": False, "error": "Server configuration error."}),
-                500,
-            )
-        except subprocess.TimeoutExpired:
-            # The process took too long
-            print("Error: PDF processing timed out.")
-            return (
-                jsonify(
-                    {
-                        "success": False,
-                        "error": "Processing timed out. File may be too large.",
-                    }
-                ),
                 500,
             )
         except Exception as e:
@@ -164,7 +152,7 @@ def view_file(file_id):
     """
     try:
         # Securely build the filename
-        filename = f"{secure_filename(file_id)}.pdf"
+        filename = f"{secure_filename(file_id)}.html"
 
         # Check if the file exists
         filepath = os.path.join(PROCESSED_FOLDER, filename)
