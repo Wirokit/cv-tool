@@ -3,4 +3,9 @@ uploads
 .env
 contact_info.json
 __pycache__
+Lib
+Scripts
+Include
 my_cv.html
+pyvenv.cfg
+cv-tool.zip

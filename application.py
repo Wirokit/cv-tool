@@ -4,11 +4,11 @@ import uuid
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from google import genai
-from dotenv import load_dotenv
+""" from dotenv import load_dotenv """
 from cv_generator import generate_professional_cv
 
 # --- Environment ---
-load_dotenv()
+""" load_dotenv() """
 
 # Create a Flask application
 app = Flask(__name__)
