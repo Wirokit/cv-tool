@@ -27,18 +27,10 @@ def generate_professional_cv(json_data, output_filename="my_cv.html"):
     skills = data.get("skills", [])
 
     # Handle Work Experience (Handling the specific single-object format provided)
-    work = data.get("workExperience", {})
-    work_title = work.get("title", "")
-    work_company = work.get("company", "")
-    work_dates = work.get("timePeriod", "")
-    work_desc = work.get("description", "")
+    job_list = data.get("workExperience", [])
 
     # Handle Education
-    edu = data.get("education", {})
-    edu_degree = edu.get("degree", "")
-    edu_school = edu.get("school", "")
-    edu_dates = edu.get("timePeriod", "")
-    edu_desc = edu.get("description", "")
+    edu_list = data.get("education", [])
 
     # Define CSS for a clean, professional look (Helvetica/Arial, clean lines)
     css_styles = """
@@ -108,7 +100,7 @@ def generate_professional_cv(json_data, output_filename="my_cv.html"):
         }
         
         .entry {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .entry-header {
             display: flex;
@@ -144,6 +136,32 @@ def generate_professional_cv(json_data, output_filename="my_cv.html"):
     skills_html = "".join(
         [f'<span class="skill-tag">{skill}</span>' for skill in skills]
     )
+
+    job_html = "".join(map(lambda j: f"""
+        <div class="entry">
+            <div class="entry-header">
+                <span class="entry-title">{j.get("title", "")}</span>
+                <span class="entry-date">{j.get("timePeriod", "")}</span>
+            </div>
+            <div class="entry-subtitle">{j.get("company", "")}</div>
+            <div class="entry-description">
+                {j.get("description", "")}
+            </div>
+        </div>
+    """, job_list))
+
+    education_html = "".join(map(lambda e: f"""
+        <div class="entry">
+            <div class="entry-header">
+                <span class="entry-title">{e.get("degree", "")}</span>
+                <span class="entry-date">{e.get("timePeriod", "")}</span>
+            </div>
+            <div class="entry-subtitle">{e.get("school", "")}</div>
+            <div class="entry-description">
+                {e.get("description", "")}
+            </div>
+        </div>
+    """, edu_list))
 
     html_content = f"""
     <!DOCTYPE html>
@@ -187,16 +205,7 @@ def generate_professional_cv(json_data, output_filename="my_cv.html"):
                 <div class="section-header">
                     <h3>Work Experience</h3>
                 </div>
-                <div class="entry">
-                    <div class="entry-header">
-                        <span class="entry-title">{work_title}</span>
-                        <span class="entry-date">{work_dates}</span>
-                    </div>
-                    <div class="entry-subtitle">{work_company}</div>
-                    <div class="entry-description">
-                        {work_desc}
-                    </div>
-                </div>
+                {job_html}
             </div>
 
             <!-- Education -->
@@ -204,16 +213,7 @@ def generate_professional_cv(json_data, output_filename="my_cv.html"):
                 <div class="section-header">
                     <h3>Education</h3>
                 </div>
-                <div class="entry">
-                    <div class="entry-header">
-                        <span class="entry-title">{edu_degree}</span>
-                        <span class="entry-date">{edu_dates}</span>
-                    </div>
-                    <div class="entry-subtitle">{edu_school}</div>
-                    <div class="entry-description">
-                        {edu_desc}
-                    </div>
-                </div>
+                {education_html}
             </div>
 
             <!-- Contact info -->
@@ -263,18 +263,28 @@ if __name__ == "__main__":
         "title": "Professional actor",
         "profileText": "Experienced performer with a passion for dramatic arts and stage production.",
         "skills": ["Voice Acting", "Stage Combat", "Improvisation", "Memorization"],
-        "workExperience": {
-            "title": "Lead Actor",
-            "company": "City Theater Company",
-            "timePeriod": "1.10.2024 - 30.5.2025",
-            "description": "Performed lead roles in three major productions. Coordinated with directors and costume designers.",
-        },
-        "education": {
-            "degree": "Bachelor of Arts in Acting",
-            "school": "National Theater School",
-            "timePeriod": "1.10.2020 - 30.5.2024",
-            "description": "Specialized in Shakespearean drama and modern movement.",
-        },
+        "workExperience": [
+            {
+                "title": "Lead Actor",
+                "company": "City Theater Company",
+                "timePeriod": "1.10.2024 - 30.5.2025",
+                "description": "Performed lead roles in three major productions. Coordinated with directors and costume designers.",
+            },
+            {
+                "title": "Lead Actor",
+                "company": "City Theater Company",
+                "timePeriod": "1.10.2024 - 30.5.2025",
+                "description": "Performed lead roles in three major productions. Coordinated with directors and costume designers.",
+            }
+        ],
+        "education": [
+            {
+                "degree": "Bachelor of Arts in Acting",
+                "school": "National Theater School",
+                "timePeriod": "1.10.2020 - 30.5.2024",
+                "description": "Specialized in Shakespearean drama and modern movement.",
+            }
+        ],
     }
 
     generate_professional_cv(raw_data)
