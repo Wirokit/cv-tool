@@ -11,7 +11,7 @@ from cv_generator import generate_professional_cv
 """ load_dotenv() """
 
 # Create a Flask application
-app = Flask(__name__)
+application = Flask(__name__)
 
 # Define upload and processed directories
 # os.path.dirname(__file__) gets the directory this script is in
@@ -24,7 +24,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 # Set a max file size (e.g., 50MB)
-app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
+application.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 
 # Define allowed file extensions
 ALLOWED_EXTENSIONS = {"pdf"}
@@ -42,10 +42,10 @@ def allowed_file(filename):
 # --- New Route to Serve the Frontend ---
 
 
-@app.route("/")
+@application.route("/")
 def serve_index():
     """Serves the index.html file for the frontend."""
-    # index.html is assumed to be in the same directory as app.py (BASE_DIR)
+    # index.html is assumed to be in the same directory as application.py (BASE_DIR)
     index_path = os.path.join(BASE_DIR, "index.html")
 
     # Check if index.html exists
@@ -59,7 +59,7 @@ def serve_index():
 # --- Endpoint 1: File Upload and Processing ---
 
 
-@app.route("/upload", methods=["POST"])
+@application.route("/upload", methods=["POST"])
 def upload_file():
     """
     Handles file upload, processing, and returns a link to the new file.
@@ -145,7 +145,7 @@ def upload_file():
 # --- Endpoint 2: Serve the Processed File ---
 
 
-@app.route("/view/<file_id>", methods=["GET"])
+@application.route("/view/<file_id>", methods=["GET"])
 def view_file(file_id):
     """
     Serves the processed file to the user.
@@ -176,4 +176,4 @@ if __name__ == "__main__":
     # Run the app.
     # 'debug=True' is great for development as it auto-reloads.
     # For production, use a real web server like Gunicorn or Waitress.
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    application.run(debug=True, host="0.0.0.0")

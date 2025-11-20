@@ -13,17 +13,21 @@
       "Improvisation",
       "Memorization"
     ],
-    "workExperience": {
-      "title": "Lead Actor",
-      "company": "City Theater Company",
-      "timePeriod": "1.10.2024 - 30.5.2025",
-      "description": "Performed lead roles in three major productions. Coordinated with directors and costume designers."
-    },
-    "education": {
-      "degree": "Bachelor of Arts in Acting",
-      "school": "National Theater School",
-      "timePeriod": "1.10.2020 - 30.5.2024",
-      "description": "Specialized in Shakespearean drama and modern movement."
-    }
+    "workExperience": [
+      {
+        "title": "Lead Actor",
+        "company": "City Theater Company",
+        "timePeriod": "1.10.2024 - 30.5.2025",
+        "description": "Performed lead roles in three major productions. Coordinated with directors and costume designers."
+      }
+    ],
+    "education": [
+      {
+        "degree": "Bachelor of Arts in Acting",
+        "school": "National Theater School",
+        "timePeriod": "1.10.2020 - 30.5.2024",
+        "description": "Specialized in Shakespearean drama and modern movement."
+      }
+    ]
   }
   ```
