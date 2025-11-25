@@ -46,14 +46,14 @@ def allowed_file(filename):
 def serve_index():
     """Serves the index.html file for the frontend."""
     # index.html is assumed to be in the same directory as application.py (BASE_DIR)
-    index_path = os.path.join(BASE_DIR, "index.html")
+    index_path = os.path.join(BASE_DIR, "upload_page.html")
 
     # Check if index.html exists
     if not os.path.exists(index_path):
-        return "Frontend (index.html) not found.", 404
+        return "Frontend (upload_page.html) not found.", 404
 
     # Send the index.html file
-    return send_from_directory(BASE_DIR, "index.html")
+    return send_from_directory(BASE_DIR, "upload_page.html")
 
 
 # --- Endpoint 1: File Upload and Processing ---
@@ -70,6 +70,7 @@ def upload_file():
         return jsonify({"success": False, "error": "No file part in the request."}), 400
 
     file = request.files["file"]
+    contact = request.values["contact"]
 
     # 2. Check if the user selected a file
     if file.filename == "":
@@ -104,7 +105,7 @@ def upload_file():
         try:
             pdf_to_process = geminicli.files.upload(file=original_filepath)
             response = geminicli.models.generate_content(
-                model="gemini-2.5-pro",
+                model="gemini-2.5-flash",
                 contents=[prompt, pdf_to_process],
                 config={
                     "response_mime_type": "application/json",
@@ -113,7 +114,7 @@ def upload_file():
 
             result_json = response.text
 
-            generate_professional_cv(result_json, processed_filepath)
+            generate_professional_cv(result_json, processed_filepath, contact_name=contact)
 
             # --- End of PDF processing logic ---
 

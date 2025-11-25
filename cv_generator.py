@@ -1,10 +1,12 @@
 # Initial file by Gemini
 import json
 
-contact_info = json.loads(open("contact_info.json", "r").read())
 
-
-def generate_professional_cv(json_data, output_filename="my_cv.html"):
+def generate_professional_cv(
+    json_data,
+    output_filename="my_cv.html",
+    contact_name="tuukka",
+):
     """
     Parses a JSON object containing CV information and generates a
     professionally styled HTML CV.
@@ -19,6 +21,9 @@ def generate_professional_cv(json_data, output_filename="my_cv.html"):
         data = json.loads(json_data)
     else:
         data = json_data
+
+    # Load contact info
+    contact_info = json.loads(open(f"contacts/contact_info_{contact_name}.json", "r").read())
 
     # Extract data with safe defaults using .get() to prevent errors if fields are missing
     name = data.get("name", "Name Not Provided")

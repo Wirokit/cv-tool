@@ -1,7 +1,7 @@
 processed_files
 uploads
 .env
-contact_info.json
+contacts
 __pycache__
 Lib
 Scripts
