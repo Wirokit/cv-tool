@@ -4,7 +4,7 @@
 ❌ Wirokit logo ylös<br/>
 ❌ "Luottamuksellinen" teksti<br/>
 ❌ Avaintaidot, kysy asiakkaan tarpeet generoitaessa?<br/>
-❌ Kirjautuminen<br/>
+✅ Kirjautuminen<br/>
 ❌ Muistutus luvan pyytämisestä tekijältä<br/>
 ❌ Wirokit domain - cv-pankki<br/>
 ❌ CV poisto 14 vuorokauden jälkeen<br/>
