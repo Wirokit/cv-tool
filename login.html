@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wirokit - CV Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom styles -->
+    <style>
+      .card {
+        box-shadow: 0 0 20px 0 rgb(0 0 0 / 0.1), 0 0 20px 0 rgb(0 0 0 / 0.1);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-100 flex items-center justify-center min-h-screen text-slate-800 font-sans"
+  >
+    <div class="w-full max-w-md p-6">
+      <!-- Card Container -->
+      <div
+        class="card bg-white rounded-2xl overflow-hidden border border-slate-200"
+      >
+        <!-- Header -->
+        <div
+          class="bg-slate-50 px-8 py-6 border-b border-slate-100 flex flex-col items-center"
+        >
+          <div class="bg-blue-100 p-3 rounded-full mb-3 text-blue-600">
+            <i data-lucide="lock" class="w-6 h-6"></i>
+          </div>
+          <h1 class="text-xl font-bold text-slate-800">Protected Area</h1>
+          <p class="text-slate-500 text-sm mt-1">
+            Please enter your password to continue
+          </p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="p-8">
+          <form id="loginForm" class="space-y-6">
+            <div>
+              <label
+                for="password"
+                class="block text-sm font-medium text-slate-700 mb-1"
+              >
+                Password
+              </label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors outline-none pl-10"
+                  placeholder="••••••••"
+                  required
+                />
+                <div class="absolute left-3 top-3.5 text-slate-400">
+                  <i data-lucide="key" class="w-5 h-5"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Message (Hidden by default) -->
+            <div
+              id="errorMessage"
+              class="hidden p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg flex items-center gap-2"
+            >
+              <i data-lucide="alert-circle" class="w-4 h-4"></i>
+              <span>Incorrect password. Please try again.</span>
+            </div>
+
+            <!-- Success Message (Hidden by default) -->
+            <div
+              id="successMessage"
+              class="hidden p-3 bg-green-50 border border-green-100 text-green-600 text-sm rounded-lg flex items-center gap-2"
+            >
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+              <span>Access granted! Redirecting...</span>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex justify-center items-center gap-2"
+            >
+              <span>Sign In</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="px-8 py-4 bg-slate-50 border-t border-slate-100 text-center"
+        >
+          <p class="text-xs text-slate-400">Wirokit &copy; 2025</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Icons
+      lucide.createIcons();
+
+      // CONFIGURATION
+      // In a real build environment (e.g., Vite, Webpack, Next.js), you would use:
+      // const SECRET_KEY = process.env.PASSWORD;
+      // For this demo, we simulate the environment variable:
+      const ENV_PASSWORD = "supersecretpassword";
+
+      const form = document.getElementById("loginForm");
+      const passwordInput = document.getElementById("password");
+      const errorMessage = document.getElementById("errorMessage");
+      const successMessage = document.getElementById("successMessage");
+      const submitBtn = form.querySelector("button");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Reset state
+        errorMessage.classList.add("hidden");
+        successMessage.classList.add("hidden");
+        passwordInput.classList.remove(
+          "border-red-500",
+          "focus:ring-red-500",
+          "focus:border-red-500"
+        );
+
+        const enteredPassword = passwordInput.value;
+
+        // Simulate network delay for realism
+        const originalBtnContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="animate-spin mr-2"><i data-lucide="loader-2" class="w-5 h-5"></i></span> Verifying...`;
+        lucide.createIcons();
+
+        const formData = new FormData();
+        formData.append("password", enteredPassword);
+
+        try {
+          const response = await fetch("/login", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            // Success State
+            successMessage.classList.remove("hidden");
+            passwordInput.classList.add(
+              "border-green-500",
+              "focus:ring-green-500",
+              "focus:border-green-500"
+            );
+            submitBtn.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Verified</span>`;
+            lucide.createIcons();
+            window.location.reload();
+          } else {
+            // Error State
+            errorMessage.classList.remove("hidden");
+            passwordInput.classList.add(
+              "border-red-500",
+              "focus:ring-red-500",
+              "focus:border-red-500"
+            );
+
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnContent;
+
+            // Shake animation effect
+            form.classList.add("animate-[shake_0.5s_ease-in-out]");
+            setTimeout(
+              () => form.classList.remove("animate-[shake_0.5s_ease-in-out]"),
+              500
+            );
+          }
+        } catch (error) {
+          // Handle network or fetch error
+          console.error("Login Error:", error);
+          displayMessage(
+            "Failed to connect to the server. Please try again.",
+            "error"
+          );
+        } finally {
+          // --- End Loading State ---
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnContent;
+          lucide.createIcons();
+          // ---
+        }
+      });
+
+      // Add shake animation to Tailwind config via style tag since we are using CDN
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

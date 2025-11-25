@@ -1,7 +1,7 @@
 # Initial file by Gemini
 import os
 import uuid
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from werkzeug.utils import secure_filename
 from google import genai
 """ from dotenv import load_dotenv """
@@ -23,8 +23,11 @@ PROCESSED_FOLDER = os.path.join(BASE_DIR, "processed_files")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
-# Set a max file size (e.g., 50MB)
-application.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
+# Application config
+application.config.from_mapping(
+    SECRET_KEY = os.environ['SECRET_FLASK_KEY'],
+    MAX_CONTENT_LENGTH = 50 * 1024 * 1024, # Set a max file size (e.g., 50MB)
+)
 
 # Define allowed file extensions
 ALLOWED_EXTENSIONS = {"pdf"}
@@ -43,17 +46,27 @@ def allowed_file(filename):
 
 
 @application.route("/")
-def serve_index():
-    """Serves the index.html file for the frontend."""
-    # index.html is assumed to be in the same directory as application.py (BASE_DIR)
-    index_path = os.path.join(BASE_DIR, "upload_page.html")
+def serve_html():
+    """Serves the html files for the frontend."""
+    """html files are assumed to be in the same directory as application.py (BASE_DIR)"""
 
-    # Check if index.html exists
-    if not os.path.exists(index_path):
-        return "Frontend (upload_page.html) not found.", 404
+    html_path = ""
+    html_file = ""
 
-    # Send the index.html file
-    return send_from_directory(BASE_DIR, "upload_page.html")
+    user_id = session.get('user_id')
+    if not user_id:
+        html_path = os.path.join(BASE_DIR, "login.html")
+        html_file = "login.html"
+    else:
+        html_path = os.path.join(BASE_DIR, "upload_page.html")
+        html_file = "upload_page.html"
+
+    # Check if html exists
+    if not os.path.exists(html_path):
+        return "Frontend ({html_file}) not found.", 404
+
+    # Send the html file
+    return send_from_directory(BASE_DIR, html_file)
 
 
 # --- Endpoint 1: File Upload and Processing ---
@@ -64,6 +77,11 @@ def upload_file():
     """
     Handles file upload, processing, and returns a link to the new file.
     """
+
+    # Ensure user is logged in
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "Access forbidden."}), 403
 
     # 1. Check if a file was sent
     if "file" not in request.files:
@@ -169,6 +187,25 @@ def view_file(file_id):
     except Exception as e:
         print(f"Error serving file: {e}")
         return "An error occurred.", 500
+    
+
+# --- Endpoint 3: Login ---
+
+
+@application.route("/login", methods=["POST"])
+def check_login():
+    # Ensure that data was sent
+    if not request.values["password"]:
+        return jsonify({"success": False, "error": "Empty body."}), 400
+    
+    # Check that password matches
+    password_correct = request.values["password"] == os.environ['SECRET_PASSWORD']
+
+    if password_correct:
+        session['user_id'] = "super"
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False})
 
 
 # --- Run the Application ---
