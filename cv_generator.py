@@ -187,9 +187,6 @@ def generate_professional_cv(
         </div>
     """, edu_list))
 
-    # Base file path
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -208,7 +205,7 @@ def generate_professional_cv(
 
         <div class="cv-container">
             <div class="logo-container">
-                <img class="top-logo" src="{BASE_DIR}\img\wirokit_b.png" />
+                <img class="top-logo" src="/static/images/wirokit_b.png" />
             </div>
 
             <!-- Header -->

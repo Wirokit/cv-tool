@@ -11,7 +11,7 @@ from cv_generator import generate_professional_cv
 """ load_dotenv() """
 
 # Create a Flask application
-application = Flask(__name__)
+application = Flask(__name__, static_url_path='/static')
 
 # Define upload and processed directories
 # os.path.dirname(__file__) gets the directory this script is in
