@@ -46,8 +46,14 @@ def generate_professional_cv(
             background-color: #f0f2f5;
             margin: 0;
             padding: 40px;
+            padding-top: 0;
             color: #333;
             line-height: 1.6;
+        }
+        .confidential-header {
+            text-align: center;
+            margin: 0;
+            color: rgb(220, 53, 69);
         }
         .cv-container {
             max-width: 800px;
@@ -198,6 +204,8 @@ def generate_professional_cv(
         {css_styles}
     </head>
     <body>
+        <h2 class="confidential-header">CONFIDENTIAL</h2>
+
         <div class="cv-container">
             <div class="logo-container">
                 <img class="top-logo" src="{BASE_DIR}\img\wirokit_b.png" />

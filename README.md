@@ -2,7 +2,7 @@
 
 ❌ Vaihtoehto pelkälle etunimelle<br/>
 ✅ Wirokit logo ylös<br/>
-❌ "Luottamuksellinen" teksti<br/>
+✅ "Luottamuksellinen" teksti<br/>
 ❌ Avaintaidot, kysy asiakkaan tarpeet generoitaessa?<br/>
 ✅ Kirjautuminen<br/>
 ❌ Muistutus luvan pyytämisestä tekijältä<br/>
@@ -10,6 +10,7 @@
 ❌ CV poisto 14 vuorokauden jälkeen<br/>
 ❌ Logi - linkki on avattu<br/>
 ✅ Kumman yhteystiedot? Tuukka vai Jarkko<br/>
+❌ Domain certifikaatti (https)<br/>
 
 --- Omat mietteet ---<br/>
 ❌ CV lista<br/>
