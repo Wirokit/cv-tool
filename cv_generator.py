@@ -1,5 +1,6 @@
 # Initial file by Gemini
 import json
+import os
 
 
 def generate_professional_cv(
@@ -56,6 +57,18 @@ def generate_professional_cv(
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             border-top: 5px solid #2c3e50;
         }
+
+        /* Top Logo */
+        .logo-container {
+            margin-top: -40px;
+            margin-bottom: -20px;
+            display: flex;
+            justify-content: center;
+        }
+        .top-logo {
+            width: 150px;
+        }
+
         /* Header Section */
         header {
             text-align: center;
@@ -168,6 +181,9 @@ def generate_professional_cv(
         </div>
     """, edu_list))
 
+    # Base file path
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -183,6 +199,10 @@ def generate_professional_cv(
     </head>
     <body>
         <div class="cv-container">
+            <div class="logo-container">
+                <img class="top-logo" src="{BASE_DIR}\img\wirokit_b.png" />
+            </div>
+
             <!-- Header -->
             <header>
                 <h1>{name}</h1>
