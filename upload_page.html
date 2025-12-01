@@ -131,22 +131,32 @@
           </div>
 
           <!-- Options -->
-          <div class="options-section">
-            <div class="flex items-center ps-1">
-              <input
-                checked
-                id="first-name-check"
-                type="checkbox"
-                value=""
-                class="primary-color first-name-check w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
-              />
-              <label
-                for="first-name-check"
-                class="select-none ms-2 text-sm font-medium text-heading"
-              >
-                First name only
-              </label>
-            </div>
+          <div class="options-section flex items-center ps-1">
+            <input
+              checked
+              id="first-name-check"
+              type="checkbox"
+              value=""
+              class="primary-color first-name-check w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+            />
+            <label
+              for="first-name-check"
+              class="select-none ms-2 text-sm font-medium text-heading"
+            >
+              First name only
+            </label>
+          </div>
+
+          <!-- Keywords / Job description -->
+          <div>
+            <label for="keyword-list" class="text-sm font-medium text-heading">
+              Keywords / Job description
+            </label>
+            <textarea
+              id="keyword-list"
+              class="w-full mb-4 border border-default-medium rounded-xs text-heading text-sm rounded-base focus:ring-brand focus:border-brand block p-3.5 shadow-xs placeholder:text-body"
+              placeholder="e.g. Web application built with custom web components, a Python server and a PostgreSQL database."
+            ></textarea>
           </div>
 
           <!-- Contact radio -->
@@ -268,6 +278,7 @@
       const fileLabel = document.getElementById("file-label");
 
       const settings = document.querySelector(".options-section");
+      const keywordList = document.getElementById("keyword-list");
       const contactRadio = document.querySelector(".contact-radio-group");
       const consentContainer = document.querySelector(".consent-container");
       const consentCheck = document.getElementById("consent-check");
@@ -335,6 +346,7 @@
         formData.append("file", file);
         formData.append("contact", selectedContact);
         formData.append("firstNameOnly", firstNameOnly);
+        formData.append("keywordList", keywordList.value);
 
         try {
           // Post the file to the backend's /upload endpoint

@@ -3,7 +3,7 @@
 ✅ Vaihtoehto pelkälle etunimelle<br/>
 ✅ Wirokit logo ylös<br/>
 ✅ "Luottamuksellinen" teksti<br/>
-❌ Avaintaidot, kysy asiakkaan tarpeet generoitaessa?<br/>
+✅ Avaintaidot, kysy asiakkaan tarpeet generoitaessa?<br/>
 ✅ Kirjautuminen<br/>
 ✅ Muistutus luvan pyytämisestä tekijältä<br/>
 ✅ Wirokit domain (http://sales.wirokit.com/)<br/>

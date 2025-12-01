@@ -90,6 +90,7 @@ def upload_file():
     file = request.files["file"]
     contact = request.values["contact"]
     first_name_only = request.values["firstNameOnly"]
+    keyword_list = request.values["keywordList"]
 
     # 2. Check if the user selected a file
     if file.filename == "":
@@ -111,6 +112,11 @@ def upload_file():
     prompt_preferences = ""
     if first_name_only == 'true':
         prompt_preferences += " Only take the first name."
+    if keyword_list != "":
+        keyword_list = keyword_list.replace('```', '')
+        prompt_preferences += f" Highlight skills relevant for the following job: ```\n{keyword_list}\n```"
+    else:
+        prompt_preferences += " Leave the 'highlightSkills' list empty."
 
     updated_prompt = prompt.replace('{p}', prompt_preferences)
 

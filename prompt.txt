@@ -9,6 +9,10 @@
     "name": "John Doe",
     "title": "Professional actor",
     "profileText": "Experienced performer with a passion for dramatic arts and stage production.",
+    "highlightSkills": [
+      "Acrobatics",
+      "Sleight of Hand"
+    ],
     "skills": [
       "Voice Acting",
       "Stage Combat",

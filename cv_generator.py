@@ -30,6 +30,7 @@ def generate_professional_cv(
     name = data.get("name", "Name Not Provided")
     title = data.get("title", "")
     profile = data.get("profileText", "")
+    hightlight_skills = data.get("highlightSkills", [])
     skills = data.get("skills", [])
 
     # Handle Work Experience (Handling the specific single-object format provided)
@@ -122,6 +123,10 @@ def generate_professional_cv(
             font-size: 0.9em;
             font-weight: 600;
         }
+        .hightlight {
+            background-color: #3b82f6;
+            color: white;
+        }
         
         .entry {
             margin-bottom: 20px;
@@ -157,9 +162,15 @@ def generate_professional_cv(
     """
 
     # Construct the HTML Content
+    highlight_skills_html = "".join(
+        [f'<span class="skill-tag hightlight">{skill}</span>' for skill in hightlight_skills]
+    )
+
     skills_html = "".join(
         [f'<span class="skill-tag">{skill}</span>' for skill in skills]
     )
+
+    skills_html_full = highlight_skills_html + skills_html
 
     job_html = "".join(map(lambda j: f"""
         <div class="entry">
@@ -227,7 +238,7 @@ def generate_professional_cv(
                 <div class="section-header">
                     <h3>Skills</h3>
                 </div>
-                <div>{skills_html}</div>
+                <div>{skills_html_full}</div>
             </div>
 
             <!-- Work Experience -->
@@ -292,6 +303,10 @@ if __name__ == "__main__":
         "name": "John Doe",
         "title": "Professional actor",
         "profileText": "Experienced performer with a passion for dramatic arts and stage production.",
+        "highlightSkills": [
+            "Acrobatics",
+            "Sleight of Hand"
+        ],
         "skills": ["Voice Acting", "Stage Combat", "Improvisation", "Memorization"],
         "workExperience": [
             {
