@@ -324,6 +324,7 @@
 
         // --- Start Loading State ---
         submitButton.disabled = true;
+        submitButton.classList.add("disabled");
         submitButton.textContent = "Uploading...";
         loadingSpinner.classList.remove("hidden");
         resultContainer.classList.remove("hidden");
@@ -371,9 +372,9 @@
         } finally {
           // --- End Loading State ---
           submitButton.disabled = false;
+          submitButton.classList.remove("disabled");
           submitButton.textContent = "Upload and Process";
           loadingSpinner.classList.add("hidden");
-          // ---
         }
       });
 
