@@ -301,6 +301,10 @@
         fileLabel.classList.add("dragover");
       });
 
+      fileWrapper.addEventListener("drop", (e) => {
+        fileLabel.classList.remove("dragover");
+      });
+
       // Update file name display on file selection
       pdfFile.addEventListener("change", (e) => {
         const file = e.target.files[0];
