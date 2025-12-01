@@ -250,12 +250,14 @@ def generate_professional_cv(
             </div>
 
             <!-- Education -->
-            <div class="section">
-                <div class="section-header">
-                    <h3>Education</h3>
+            {"" if len(edu_list) == 0 else f"""
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Education</h3>
+                    </div>
+                    {education_html}
                 </div>
-                {education_html}
-            </div>
+            """}
 
             <!-- Contact info -->
             <div class="section">
