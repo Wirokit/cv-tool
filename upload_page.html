@@ -45,6 +45,9 @@
         cursor: pointer;
         transition: all 0.2s ease-in-out;
       }
+      .dragover {
+        border: 2px solid #3b82f6; /* gray-300 */
+      }
       .file-input-wrapper:hover .file-input-label {
         border-color: #3b82f6; /* blue-500 */
         background-color: #eff6ff; /* blue-50 */
@@ -287,6 +290,16 @@
       const loadingSpinner = document.getElementById("loading-spinner");
       const resultMessage = document.getElementById("result-message");
       const submitButton = document.getElementById("submit-button");
+
+      document.addEventListener("dragover", (e) => {
+        if (e.target.id !== "pdf-file") {
+          fileLabel.classList.remove("dragover");
+        }
+      });
+
+      fileWrapper.addEventListener("dragover", (e) => {
+        fileLabel.classList.add("dragover");
+      });
 
       // Update file name display on file selection
       pdfFile.addEventListener("change", (e) => {
