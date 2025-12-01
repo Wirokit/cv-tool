@@ -89,6 +89,7 @@ def upload_file():
 
     file = request.files["file"]
     contact = request.values["contact"]
+    first_name_only = request.values["firstNameOnly"]
 
     # 2. Check if the user selected a file
     if file.filename == "":
@@ -105,6 +106,13 @@ def upload_file():
             ),
             400,
         )
+    
+    # Prompt settings
+    prompt_preferences = ""
+    if first_name_only == 'true':
+        prompt_preferences += " Only take the first name."
+
+    updated_prompt = prompt.replace('{p}', prompt_preferences)
 
     if file:
         # 4. Secure the filename (prevents directory traversal attacks)
@@ -124,7 +132,7 @@ def upload_file():
             pdf_to_process = geminicli.files.upload(file=original_filepath)
             response = geminicli.models.generate_content(
                 model="gemini-2.5-flash",
-                contents=[prompt, pdf_to_process],
+                contents=[updated_prompt, pdf_to_process],
                 config={
                     "response_mime_type": "application/json",
                 },

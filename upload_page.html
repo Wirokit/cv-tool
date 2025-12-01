@@ -60,6 +60,9 @@
       .radio-container:has(.contact-radio:checked) {
         border-color: #3b82f6;
       }
+      .first-name-check {
+        color: #3b82f6;
+      }
     </style>
   </head>
   <body class="bg-gray-100 font-sans antialiased">
@@ -118,6 +121,25 @@
               accept="application/pdf"
               class="file-input"
             />
+          </div>
+
+          <!-- Options -->
+          <div class="options-section">
+            <div class="flex items-center ps-1">
+              <input
+                checked
+                id="first-name-check"
+                type="checkbox"
+                value=""
+                class="first-name-check w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+              />
+              <label
+                for="first-name-check"
+                class="select-none ms-2 text-sm font-medium text-heading"
+              >
+                First name only
+              </label>
+            </div>
           </div>
 
           <!-- Contact radio -->
@@ -215,6 +237,7 @@
       const fileNameDisplay = document.getElementById("file-name");
       const fileWrapper = document.getElementById("file-wrapper");
       const fileLabel = document.getElementById("file-label");
+      const settings = document.querySelector(".options-section");
       const contactRadio = document.querySelector(".contact-radio-group");
 
       const resultContainer = document.getElementById("result-container");
@@ -246,6 +269,10 @@
           return;
         }
 
+        const firstNameOnly = settings.querySelector(
+          "input.first-name-check"
+        ).checked;
+
         const selectedContact = contactRadio.querySelector(
           'input[type="radio"]:checked'
         ).value;
@@ -261,6 +288,7 @@
         const formData = new FormData();
         formData.append("file", file);
         formData.append("contact", selectedContact);
+        formData.append("firstNameOnly", firstNameOnly);
 
         try {
           // Post the file to the backend's /upload endpoint

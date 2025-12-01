@@ -1,6 +1,8 @@
   Objective:
 
-  Only return a JSON string, NOTHING else. In case a value is null, make it an empty string instead. Extract CV information from the provided PDF file, and parse the extracted information in to the following JSON format:
+  Only return a JSON string, NOTHING else. In case a value is null, make it an empty string instead.{p}
+  
+  Extract CV information from the provided PDF file, and parse the extracted information in to the following JSON format:
 
   ```
   {

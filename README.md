@@ -1,6 +1,6 @@
 ## TO-DO
 
-❌ Vaihtoehto pelkälle etunimelle<br/>
+✅ Vaihtoehto pelkälle etunimelle<br/>
 ✅ Wirokit logo ylös<br/>
 ✅ "Luottamuksellinen" teksti<br/>
 ❌ Avaintaidot, kysy asiakkaan tarpeet generoitaessa?<br/>
