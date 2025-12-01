@@ -5,7 +5,7 @@
 ✅ "Luottamuksellinen" teksti<br/>
 ❌ Avaintaidot, kysy asiakkaan tarpeet generoitaessa?<br/>
 ✅ Kirjautuminen<br/>
-❌ Muistutus luvan pyytämisestä tekijältä<br/>
+✅ Muistutus luvan pyytämisestä tekijältä<br/>
 ✅ Wirokit domain (http://sales.wirokit.com/)<br/>
 ❌ CV poisto 14 vuorokauden jälkeen<br/>
 ❌ Logi - linkki on avattu<br/>
