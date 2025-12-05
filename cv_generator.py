@@ -45,11 +45,16 @@ def generate_professional_cv(
     # Define CSS for a clean, professional look (Helvetica/Arial, clean lines)
     css_styles = """
     <style>
+        @media print {
+            div {
+                break-inside: avoid;
+                print-color-adjust: exact;
+            }
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
             margin: 0;
-            padding: 40px;
             padding-top: 0;
             color: #333;
             line-height: 1.6;
@@ -58,10 +63,14 @@ def generate_professional_cv(
             text-align: center;
             margin: 0;
             color: rgb(220, 53, 69);
+            position: absolute;
+            top: 0;
+            width: 100%;
         }
         .cv-container {
             max-width: 800px;
             margin: 0 auto;
+            margin-top: 40px;
             background-color: #ffffff;
             padding: 50px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
