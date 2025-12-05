@@ -7,14 +7,13 @@
 ✅ Kirjautuminen<br/>
 ✅ Muistutus luvan pyytämisestä tekijältä<br/>
 ✅ Wirokit domain (http://sales.wirokit.com/)<br/>
-❌ CV poisto 14 vuorokauden jälkeen<br/>
-❌ Logi - linkki on avattu<br/>
 ✅ Kumman yhteystiedot? Tuukka vai Jarkko<br/>
 ❌ Domain certifikaatti (https)<br/>
+❌ Tab icon<br/>
 
---- Omat mietteet ---<br/>
-❌ CV lista<br/>
-
---- Myöhemmin ---<br/>
+--- DB Reliant ---<br/>
 ❌ Database integraatio<br/>
+❌ CV poisto 14 vuorokauden jälkeen<br/>
+❌ Logi - linkki on avattu<br/>
+❌ CV lista<br/>
 ❌ Käyttäjätunnukset - CVn yhteystiedot käyttäjän mukaan<br/>
