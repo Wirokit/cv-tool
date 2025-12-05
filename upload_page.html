@@ -163,6 +163,18 @@
             ></textarea>
           </div>
 
+          <!-- custom profile text -->
+          <div>
+            <label for="profile-text" class="text-sm font-medium text-heading">
+              Custom profile text (injected at the end of the profile section)
+            </label>
+            <textarea
+              id="profile-text"
+              class="w-full mb-4 border border-default-medium rounded-xs text-heading text-sm rounded-base focus:ring-brand focus:border-brand block p-3.5 shadow-xs placeholder:text-body"
+              placeholder="e.g. Curious, detail-oriented, and quick to learn, Sami brings fresh perspective and solid energy to any development team!"
+            ></textarea>
+          </div>
+
           <!-- Contact radio -->
           <div class="contact-radio-group">
             <h3 class="mb-2 font-semibold text-heading">Contact Person:</h3>
@@ -209,8 +221,8 @@
             class="consent-container w-full p-4 border border-default-medium rounded-xs text-center warn-border"
           >
             <h3 class="mb-4 font-semibold text-heading">
-              The data owner must give their consent for us to manage and
-              process their data!
+              The data owner must give their consent for us to store and process
+              their data!
             </h3>
             <label
               for="consent-check"
@@ -283,6 +295,7 @@
 
       const settings = document.querySelector(".options-section");
       const keywordList = document.getElementById("keyword-list");
+      const profileText = document.getElementById("profile-text");
       const contactRadio = document.querySelector(".contact-radio-group");
       const consentContainer = document.querySelector(".consent-container");
       const consentCheck = document.getElementById("consent-check");
@@ -365,6 +378,7 @@
         formData.append("contact", selectedContact);
         formData.append("firstNameOnly", firstNameOnly);
         formData.append("keywordList", keywordList.value);
+        formData.append("profileText", profileText.value);
 
         try {
           // Post the file to the backend's /upload endpoint

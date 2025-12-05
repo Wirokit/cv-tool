@@ -9,8 +9,8 @@
 ✅ Wirokit domain (http://sales.wirokit.com/)<br/>
 ✅ Kumman yhteystiedot? Tuukka vai Jarkko<br/>
 ❌ Domain certifikaatti (https)<br/>
-❌ Tab icon<br/>
-❌ Custom teksti profiilin loppuun<br/>
+✅ Tab icon<br/>
+✅ Custom teksti profiilin loppuun<br/>
 
 --- DB Reliant ---<br/>
 ❌ Database integraatio<br/>

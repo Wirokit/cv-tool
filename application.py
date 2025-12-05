@@ -91,6 +91,7 @@ def upload_file():
     contact = request.values["contact"]
     first_name_only = request.values["firstNameOnly"]
     keyword_list = request.values["keywordList"]
+    profile_text = request.values["profileText"]
 
     # 2. Check if the user selected a file
     if file.filename == "":
@@ -146,7 +147,12 @@ def upload_file():
 
             result_json = response.text
 
-            generate_professional_cv(result_json, processed_filepath, contact_name=contact)
+            generate_professional_cv(
+                result_json,
+                processed_filepath,
+                contact_name=contact,
+                profile_extra_text=profile_text
+            )
 
             # --- End of PDF processing logic ---
 

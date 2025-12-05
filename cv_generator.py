@@ -6,6 +6,7 @@ def generate_professional_cv(
     json_data,
     output_filename="my_cv.html",
     contact_name="tuukka",
+    profile_extra_text="",
 ):
     """
     Parses a JSON object containing CV information and generates a
@@ -234,6 +235,9 @@ def generate_professional_cv(
                     <h3>Profile</h3>
                 </div>
                 <p>{profile}</p>
+                {"" if profile_extra_text == "" else f"""
+                    <p>{profile_extra_text}</p>
+                """}
             </div>
 
             <!-- Skills -->
