@@ -189,6 +189,12 @@ def view_file(file_id):
     """
     Serves the processed file to the user.
     """
+
+    # Ensure user is logged in
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "Access forbidden."}), 403
+    
     try:
         # Securely build the filename
         filename = f"{secure_filename(file_id)}.html"
