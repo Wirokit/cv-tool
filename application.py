@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 from google import genai
 """ from dotenv import load_dotenv """
 from cv_generator import generate_professional_cv
+import boto3
+import botocore
 
 # --- Environment ---
 """ load_dotenv() """
@@ -35,6 +37,9 @@ ALLOWED_EXTENSIONS = {"pdf"}
 # Create a Gemini client
 geminicli = genai.Client()
 prompt = open("prompt.txt", "r").read()
+
+# Create an S3 client.
+s3 = boto3.client("s3")
 
 
 def allowed_file(filename):
@@ -154,6 +159,10 @@ def upload_file():
                 profile_extra_text=profile_text
             )
 
+            # Upload HTML file to S3
+            with open(processed_filepath, 'rb') as data:
+                s3.upload_fileobj(data, os.environ.get('S3_BUCKET_NAME'), f"cv_html/{processed_filename}")
+
             # --- End of PDF processing logic ---
 
         except FileNotFoundError:
@@ -202,7 +211,8 @@ def view_file(file_id):
         # Check if the file exists
         filepath = os.path.join(PROCESSED_FOLDER, filename)
         if not os.path.exists(filepath):
-            return "File not found.", 404
+            # Download the file from S3
+            s3.download_file(os.environ.get('S3_BUCKET_NAME'), f"cv_html/{filename}", filepath)
 
         # Send the file from the 'processed_files' directory
         return send_from_directory(
@@ -210,6 +220,12 @@ def view_file(file_id):
             filename,
             as_attachment=False,  # Set to True to force download
         )
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            return "File not found.", 404
+        else:
+            print(f"Error serving file: {e}")
+            return "An error occurred.", 500
     except Exception as e:
         print(f"Error serving file: {e}")
         return "An error occurred.", 500
