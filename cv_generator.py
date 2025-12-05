@@ -30,8 +30,11 @@ def generate_professional_cv(
     name = data.get("name", "Name Not Provided")
     title = data.get("title", "")
     profile = data.get("profileText", "")
-    hightlight_skills = data.get("highlightSkills", [])
-    skills = data.get("skills", [])
+    highlight_skills = data.get("highlightSkills", [])
+    raw_skills = data.get("skills", [])
+
+    # Remove any skills already included in highlight_skills
+    skills = filter(lambda skill: skill not in highlight_skills, raw_skills)
 
     # Handle Work Experience (Handling the specific single-object format provided)
     job_list = data.get("workExperience", [])
@@ -163,7 +166,7 @@ def generate_professional_cv(
 
     # Construct the HTML Content
     highlight_skills_html = "".join(
-        [f'<span class="skill-tag hightlight">{skill}</span>' for skill in hightlight_skills]
+        [f'<span class="skill-tag hightlight">{skill}</span>' for skill in highlight_skills]
     )
 
     skills_html = "".join(
@@ -307,7 +310,8 @@ if __name__ == "__main__":
         "profileText": "Experienced performer with a passion for dramatic arts and stage production.",
         "highlightSkills": [
             "Acrobatics",
-            "Sleight of Hand"
+            "Sleight of Hand",
+            "Improvisation"
         ],
         "skills": ["Voice Acting", "Stage Combat", "Improvisation", "Memorization"],
         "workExperience": [
