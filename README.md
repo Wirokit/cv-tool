@@ -13,8 +13,8 @@
 ✅ Custom teksti profiilin loppuun<br/>
 
 --- DB Reliant ---<br/>
-❌ Database integraatio<br/>
+✅ Database integraatio<br/>
 ❌ CV poisto 14 vuorokauden jälkeen<br/>
 ❌ Logi - linkki on avattu<br/>
 ❌ CV lista<br/>
-❌ Käyttäjätunnukset - CVn yhteystiedot käyttäjän mukaan<br/>
+✅ Käyttäjätunnukset - CVn yhteystiedot käyttäjän mukaan<br/>
