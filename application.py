@@ -12,7 +12,7 @@ import psycopg2
 from psycopg2.extensions import AsIs
 from psycopg2.extras import register_uuid
 import json
-import datetime
+import threading
 
 # --- Environment ---
 """ load_dotenv() """
@@ -45,6 +45,53 @@ prompt = open("prompt.txt", "r").read()
 
 # Create an S3 client.
 s3 = boto3.client("s3")
+
+# Start cleanup script - Runs every 24h
+def cleanup():
+    print("Starting cleanup process")
+    records_cleaned = 0
+
+    # Connect to an RDS database
+    conn = psycopg2.connect(
+        host=os.environ.get('RDS_HOSTNAME'),
+        database=os.environ.get('RDS_DB_NAME'),
+        user=os.environ.get('RDS_USERNAME'),
+        password=os.environ.get('RDS_PASSWORD'),
+        port=os.environ.get('RDS_PORT')
+    )
+    cur = conn.cursor()
+
+    # Register the UUID format for psycopg2
+    register_uuid()
+
+    # Fetch a db entry based on provided user id
+    cur.execute(f"SELECT id FROM cv WHERE date_created < now() - interval '{os.environ.get('RETENTION_DAYS')}' day")
+    
+    expired_records = cur.fetchall()
+    for record in expired_records:
+        fileName = f"{str(record[0])}.html"
+        print(fileName)
+        # Delete from S3
+        s3.delete_object(Bucket=os.environ.get('S3_BUCKET_NAME'), Key=f"cv_html/{fileName}")
+        # Delete from local memory
+        if os.path.exists(f"processed_files/{fileName}"):
+            os.remove(f"processed_files/{fileName}")
+        # Delete DB record
+        query = "DELETE FROM cv WHERE id = %s"
+        cur.execute(query, (record))
+        records_cleaned += 1
+
+    # Commit changes
+    conn.commit()
+    
+    # Close connection
+    cur.close()
+    conn.close()
+
+    print(f"Cleaned up {records_cleaned} records")
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        threading.Timer(86400, cleanup).start()
+cleanup()
 
 
 def allowed_file(filename):
@@ -234,9 +281,9 @@ def upload_file():
             # Store CV information in the DB
             query = """
                 INSERT INTO cv (id, data_owner, date_created)
-                VALUES (%s, %s, %s)
+                VALUES (%s, %s, now())
             """
-            cur.execute(query, (file_id, json_data["name"], datetime.datetime.now(datetime.timezone.utc), ))
+            cur.execute(query, (file_id, json_data["name"]))
             conn.commit()
             
             # Close connection
@@ -344,5 +391,4 @@ def check_login():
 if __name__ == "__main__":
     # Run the app.
     # 'debug=True' is great for development as it auto-reloads.
-    # For production, use a real web server like Gunicorn or Waitress.
-    application.run(debug=True, host="0.0.0.0")
+    application.run(debug=os.environ.get('DEBUG_MODE') == "TRUE", host="0.0.0.0")
