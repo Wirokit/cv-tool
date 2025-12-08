@@ -8,6 +8,8 @@ from google import genai
 from cv_generator import generate_professional_cv
 import boto3
 import botocore
+import psycopg2
+from psycopg2.extensions import AsIs
 
 # --- Environment ---
 """ load_dotenv() """
@@ -47,6 +49,46 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def get_user_record(user, column="*"):
+    try:
+        # Connect to an RDS database
+        conn = psycopg2.connect(
+            host=os.environ.get('RDS_HOSTNAME'),
+            database=os.environ.get('RDS_DB_NAME'),
+            user=os.environ.get('RDS_USERNAME'),
+            password=os.environ.get('RDS_PASSWORD'),
+            port=os.environ.get('RDS_PORT')
+        )
+        cur = conn.cursor()
+
+        # Fetch a db entry based on provided user id
+        query = "SELECT %s FROM users WHERE id = %s"
+        cur.execute(query, (AsIs(column), user,))
+        
+        user_record = cur.fetchone()
+        
+        # Close connection
+        cur.close()
+        conn.close()
+
+        return user_record
+    except Exception as e:
+        print(f"Error fetching user: {e}")
+        return None
+    
+
+def session_is_valid(session):
+    valid_session = False
+
+    user_id = session.get('user_id')
+    if user_id:
+        user_data = get_user_record(user_id, "is_disabled")
+        if user_data and not user_data[0]:
+            valid_session = True
+
+    return valid_session
+
+
 # --- New Route to Serve the Frontend ---
 
 
@@ -58,8 +100,8 @@ def serve_html():
     html_path = ""
     html_file = ""
 
-    user_id = session.get('user_id')
-    if not user_id:
+    valid_session = session_is_valid(session)
+    if not valid_session:
         html_path = os.path.join(BASE_DIR, "login.html")
         html_file = "login.html"
     else:
@@ -84,8 +126,8 @@ def upload_file():
     """
 
     # Ensure user is logged in
-    user_id = session.get('user_id')
-    if not user_id:
+    valid_session = session_is_valid(session)
+    if not valid_session:
         return jsonify({"success": False, "error": "Access forbidden."}), 403
 
     # 1. Check if a file was sent
@@ -200,8 +242,8 @@ def view_file(file_id):
     """
 
     # Ensure user is logged in
-    user_id = session.get('user_id')
-    if not user_id:
+    valid_session = session_is_valid(session)
+    if not valid_session:
         return jsonify({"success": False, "error": "Access forbidden."}), 403
     
     try:
@@ -237,15 +279,24 @@ def view_file(file_id):
 @application.route("/login", methods=["POST"])
 def check_login():
     # Ensure that data was sent
-    if not request.values["password"]:
+    if not request.values["user"] or not request.values["password"]:
         return jsonify({"success": False, "error": "Empty body."}), 400
     
-    # Check that password matches
-    password_correct = request.values["password"] == os.environ['SECRET_PASSWORD']
+    # Get db entry based on given user id
+    user_record = get_user_record(request.values["user"], 'password')
 
-    if password_correct:
-        session['user_id'] = "super"
-        return jsonify({"success": True})
+    # Check that password matches
+    if user_record:
+        stored_password = user_record[0]
+        
+        # Compare passwords - UNHASHED
+        password_correct = request.values["password"] == stored_password
+
+        if password_correct:
+            session['user_id'] = request.values["user"]
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False})
     else:
         return jsonify({"success": False})
 

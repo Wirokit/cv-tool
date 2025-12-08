@@ -32,13 +32,34 @@
           </div>
           <h1 class="text-xl font-bold text-slate-800">Protected Area</h1>
           <p class="text-slate-500 text-sm mt-1">
-            Please enter your password to continue
+            Please enter your credentials to continue
           </p>
         </div>
 
         <!-- Login Form -->
         <div class="p-8">
           <form id="loginForm" class="space-y-6">
+            <div>
+              <label
+                for="username"
+                class="block text-sm font-medium text-slate-700 mb-1"
+              >
+                Username
+              </label>
+              <div class="relative">
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors outline-none pl-10"
+                  required
+                />
+                <div class="absolute left-3 top-3.5 text-slate-400">
+                  <i data-lucide="user" class="w-5 h-5"></i>
+                </div>
+              </div>
+            </div>
+
             <div>
               <label
                 for="password"
@@ -109,6 +130,7 @@
       const ENV_PASSWORD = "supersecretpassword";
 
       const form = document.getElementById("loginForm");
+      const usernameInput = document.getElementById("username");
       const passwordInput = document.getElementById("password");
       const errorMessage = document.getElementById("errorMessage");
       const successMessage = document.getElementById("successMessage");
@@ -126,6 +148,7 @@
           "focus:border-red-500"
         );
 
+        const username = usernameInput.value;
         const enteredPassword = passwordInput.value;
 
         // Simulate network delay for realism
@@ -135,6 +158,7 @@
         lucide.createIcons();
 
         const formData = new FormData();
+        formData.append("user", username);
         formData.append("password", enteredPassword);
 
         try {
