@@ -8,3 +8,5 @@ Include
 my_cv.html
 pyvenv.cfg
 cv-tool.zip
+generate_zip.bat
+zip_list.txt
