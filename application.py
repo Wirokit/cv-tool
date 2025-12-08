@@ -133,9 +133,11 @@ def upload_file():
     # 1. Check if a file was sent
     if "file" not in request.files:
         return jsonify({"success": False, "error": "No file part in the request."}), 400
+    
+    # Get contact data for the current user
+    contact_data = get_user_record(session.get('user_id'), "contact_name, contact_email, contact_phone")
 
     file = request.files["file"]
-    contact = request.values["contact"]
     first_name_only = request.values["firstNameOnly"]
     keyword_list = request.values["keywordList"]
     profile_text = request.values["profileText"]
@@ -196,8 +198,10 @@ def upload_file():
 
             generate_professional_cv(
                 result_json,
-                processed_filepath,
-                contact_name=contact,
+                contact_name=contact_data[0],
+                contact_email=contact_data[1],
+                contact_phone=contact_data[2],
+                output_filename=processed_filepath,
                 profile_extra_text=profile_text
             )
 

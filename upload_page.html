@@ -61,9 +61,6 @@
       .primary-color {
         color: #3b82f6;
       }
-      .radio-container:has(.contact-radio:checked) {
-        border-color: #3b82f6;
-      }
       .disabled {
         cursor: default !important;
         background-color: #9a9fa7 !important;
@@ -175,48 +172,6 @@
             ></textarea>
           </div>
 
-          <!-- Contact radio -->
-          <div class="contact-radio-group">
-            <h3 class="mb-2 font-semibold text-heading">Contact Person:</h3>
-            <div class="flex items-center w-full">
-              <div
-                class="radio-container w-full border border-default bg-neutral-primary-soft rounded-base"
-              >
-                <label
-                  for="contact-tuukka"
-                  class="flex items-center w-full p-4 select-none text-sm font-medium text-heading cursor-pointer"
-                >
-                  <input
-                    checked
-                    id="contact-tuukka"
-                    type="radio"
-                    value="tuukka"
-                    name="contact-radio"
-                    class="primary-color contact-radio mr-2 w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
-                  />
-                  Tuukka
-                </label>
-              </div>
-              <div
-                class="radio-container w-full border border-default bg-neutral-primary-soft rounded-base"
-              >
-                <label
-                  for="contact-jarkko"
-                  class="flex items-center w-full p-4 select-none text-sm font-medium text-heading cursor-pointer"
-                >
-                  <input
-                    id="contact-jarkko"
-                    type="radio"
-                    value="jarkko"
-                    name="contact-radio"
-                    class="primary-color contact-radio mr-2 w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
-                  />
-                  Jarkko
-                </label>
-              </div>
-            </div>
-          </div>
-
           <div
             class="consent-container w-full p-4 border border-default-medium rounded-xs text-center warn-border"
           >
@@ -296,7 +251,6 @@
       const settings = document.querySelector(".options-section");
       const keywordList = document.getElementById("keyword-list");
       const profileText = document.getElementById("profile-text");
-      const contactRadio = document.querySelector(".contact-radio-group");
       const consentContainer = document.querySelector(".consent-container");
       const consentCheck = document.getElementById("consent-check");
 
@@ -360,10 +314,6 @@
           "input.first-name-check"
         ).checked;
 
-        const selectedContact = contactRadio.querySelector(
-          'input[type="radio"]:checked'
-        ).value;
-
         // --- Start Loading State ---
         submitButton.disabled = true;
         submitButton.classList.add("disabled");
@@ -375,7 +325,6 @@
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("contact", selectedContact);
         formData.append("firstNameOnly", firstNameOnly);
         formData.append("keywordList", keywordList.value);
         formData.append("profileText", profileText.value);

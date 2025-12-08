@@ -4,8 +4,10 @@ import json
 
 def generate_professional_cv(
     json_data,
+    contact_name,
+    contact_email,
+    contact_phone,
     output_filename="my_cv.html",
-    contact_name="tuukka",
     profile_extra_text="",
 ):
     """
@@ -23,8 +25,8 @@ def generate_professional_cv(
     else:
         data = json_data
 
-    # Load contact info
-    contact_info = json.loads(open(f"contacts/contact_info_{contact_name}.json", "r").read())
+    # Get disclaimer text
+    disclaimer = open(f"disclaimer.txt", "r").read()
 
     # Extract data with safe defaults using .get() to prevent errors if fields are missing
     name = data.get("name", "Name Not Provided")
@@ -282,19 +284,19 @@ def generate_professional_cv(
                 </div>
                 <div class="entry">
                     <div class="entry-header">
-                        <span class="entry-title">{contact_info.get("name", "")}</span>
+                        <span class="entry-title">{contact_name}</span>
                     </div>
                     <div class="entry-description">
-                        <i class="material-icons">email</i> {contact_info.get("email", "")}
+                        <i class="material-icons">email</i> {contact_email}
                     </div>
                     <div class="entry-description">
-                        <i class="material-icons">call</i> {contact_info.get("phone", "")}
+                        <i class="material-icons">call</i> {contact_phone}
                     </div>
                     
                 </div>
                 <div class="entry">
                     <div class="entry-description">
-                        {contact_info.get("disclaimer", "")}
+                        {disclaimer}
                     </div>
                 </div>
             </div>
@@ -351,4 +353,4 @@ if __name__ == "__main__":
         ],
     }
 
-    generate_professional_cv(raw_data)
+    generate_professional_cv(raw_data, "Sampo Koski", "sales@wirokit.com", "+358 12 345 6789")
