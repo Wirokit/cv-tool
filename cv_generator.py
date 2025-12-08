@@ -1,7 +1,4 @@
 # Initial file by Gemini
-import json
-
-
 def generate_professional_cv(
     json_data,
     contact_name,
@@ -15,34 +12,32 @@ def generate_professional_cv(
     professionally styled HTML CV.
 
     Args:
-        json_data (dict or str): The CV data in dictionary format or JSON string.
+        json_data (dict): The CV data in dictionary format.
+        contact_name (str): Full name of the contact for the "Wirokit contact" section.
+        contact_email (str): Email address of the contact for the "Wirokit contact" section.
+        contact_phone (str): Phone number of the contact for the "Wirokit contact" section.
         output_filename (str): The name of the file to create.
+        profile_extra_text (str): Extra profile text to add as an additional paragraph.
     """
-
-    # Ensure data is a dictionary
-    if isinstance(json_data, str):
-        data = json.loads(json_data)
-    else:
-        data = json_data
 
     # Get disclaimer text
     disclaimer = open(f"disclaimer.txt", "r").read()
 
     # Extract data with safe defaults using .get() to prevent errors if fields are missing
-    name = data.get("name", "Name Not Provided")
-    title = data.get("title", "")
-    profile = data.get("profileText", "")
-    highlight_skills = data.get("highlightSkills", [])
-    raw_skills = data.get("skills", [])
+    name = json_data.get("name", "Name Not Provided")
+    title = json_data.get("title", "")
+    profile = json_data.get("profileText", "")
+    highlight_skills = json_data.get("highlightSkills", [])
+    raw_skills = json_data.get("skills", [])
 
     # Remove any skills already included in highlight_skills
     skills = filter(lambda skill: skill not in highlight_skills, raw_skills)
 
     # Handle Work Experience (Handling the specific single-object format provided)
-    job_list = data.get("workExperience", [])
+    job_list = json_data.get("workExperience", [])
 
     # Handle Education
-    edu_list = data.get("education", [])
+    edu_list = json_data.get("education", [])
 
     # Define CSS for a clean, professional look (Helvetica/Arial, clean lines)
     css_styles = """

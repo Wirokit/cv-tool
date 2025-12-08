@@ -10,6 +10,9 @@ import boto3
 import botocore
 import psycopg2
 from psycopg2.extensions import AsIs
+from psycopg2.extras import register_uuid
+import json
+import datetime
 
 # --- Environment ---
 """ load_dotenv() """
@@ -196,8 +199,14 @@ def upload_file():
 
             result_json = response.text
 
+            # Ensure data is a dictionary
+            if isinstance(result_json, str):
+                json_data = json.loads(result_json)
+            else:
+                json_data = result_json
+
             generate_professional_cv(
-                result_json,
+                json_data,
                 contact_name=contact_data[0],
                 contact_email=contact_data[1],
                 contact_phone=contact_data[2],
@@ -208,6 +217,31 @@ def upload_file():
             # Upload HTML file to S3
             with open(processed_filepath, 'rb') as data:
                 s3.upload_fileobj(data, os.environ.get('S3_BUCKET_NAME'), f"cv_html/{processed_filename}")
+
+            # Log new CV to the database
+            conn = psycopg2.connect(
+                host=os.environ.get('RDS_HOSTNAME'),
+                database=os.environ.get('RDS_DB_NAME'),
+                user=os.environ.get('RDS_USERNAME'),
+                password=os.environ.get('RDS_PASSWORD'),
+                port=os.environ.get('RDS_PORT')
+            )
+            cur = conn.cursor()
+
+            # Register the UUID format for psycopg2
+            register_uuid()
+
+            # Store CV information in the DB
+            query = """
+                INSERT INTO cv (id, data_owner, date_created)
+                VALUES (%s, %s, %s)
+            """
+            cur.execute(query, (file_id, json_data["name"], datetime.datetime.now(datetime.timezone.utc), ))
+            conn.commit()
+            
+            # Close connection
+            cur.close()
+            conn.close()
 
             # --- End of PDF processing logic ---
 

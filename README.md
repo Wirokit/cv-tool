@@ -7,7 +7,7 @@
 ✅ Kirjautuminen<br/>
 ✅ Muistutus luvan pyytämisestä tekijältä<br/>
 ✅ Wirokit domain (http://sales.wirokit.com/)<br/>
-✅ Kumman yhteystiedot? Tuukka vai Jarkko<br/>
+<s>✅ Kumman yhteystiedot? Tuukka vai Jarkko</s><br/>
 ❌ Domain certifikaatti (https)<br/>
 ✅ Tab icon<br/>
 ✅ Custom teksti profiilin loppuun<br/>
