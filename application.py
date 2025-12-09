@@ -93,8 +93,7 @@ def cleanup():
     conn.close()
 
     print(f"Cleaned up {records_cleaned} records")
-    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-        threading.Timer(86400, cleanup).start()
+    threading.Timer(86400, cleanup).start()
 cleanup()
 
 
