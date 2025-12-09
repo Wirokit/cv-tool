@@ -74,7 +74,6 @@ def cleanup():
     expired_records = cur.fetchall()
     for record in expired_records:
         fileName = f"{str(record[0])}.html"
-        print(fileName)
         # Delete from S3
         s3.delete_object(Bucket=os.environ.get('S3_BUCKET_NAME'), Key=f"cv_html/{fileName}")
         # Delete from local memory
