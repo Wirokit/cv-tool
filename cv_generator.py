@@ -172,7 +172,10 @@ def generate_professional_cv(
 
     # Construct the HTML Content
     highlight_skills_html = "".join(
-        [f'<span class="skill-tag hightlight">{skill}</span>' for skill in highlight_skills]
+        [
+            f'<span class="skill-tag hightlight">{skill}</span>'
+            for skill in highlight_skills
+        ]
     )
 
     skills_html = "".join(
@@ -181,7 +184,9 @@ def generate_professional_cv(
 
     skills_html_full = highlight_skills_html + skills_html
 
-    job_html = "".join(map(lambda j: f"""
+    job_html = "".join(
+        map(
+            lambda j: f"""
         <div class="entry">
             <div class="entry-header">
                 <span class="entry-title">{j.get("title", "")}</span>
@@ -192,9 +197,14 @@ def generate_professional_cv(
                 {j.get("description", "")}
             </div>
         </div>
-    """, job_list))
+    """,
+            job_list,
+        )
+    )
 
-    education_html = "".join(map(lambda e: f"""
+    education_html = "".join(
+        map(
+            lambda e: f"""
         <div class="entry">
             <div class="entry-header">
                 <span class="entry-title">{e.get("degree", "")}</span>
@@ -205,7 +215,10 @@ def generate_professional_cv(
                 {e.get("description", "")}
             </div>
         </div>
-    """, edu_list))
+    """,
+            edu_list,
+        )
+    )
 
     html_content = f"""
     <!DOCTYPE html>
@@ -318,11 +331,7 @@ if __name__ == "__main__":
         "name": "John Doe",
         "title": "Professional actor",
         "profileText": "Experienced performer with a passion for dramatic arts and stage production.",
-        "highlightSkills": [
-            "Acrobatics",
-            "Sleight of Hand",
-            "Improvisation"
-        ],
+        "highlightSkills": ["Acrobatics", "Sleight of Hand", "Improvisation"],
         "skills": ["Voice Acting", "Stage Combat", "Improvisation", "Memorization"],
         "workExperience": [
             {
@@ -336,7 +345,7 @@ if __name__ == "__main__":
                 "company": "City Theater Company",
                 "timePeriod": "1.10.2024 - 30.5.2025",
                 "description": "Performed lead roles in three major productions. Coordinated with directors and costume designers.",
-            }
+            },
         ],
         "education": [
             {
@@ -348,4 +357,6 @@ if __name__ == "__main__":
         ],
     }
 
-    generate_professional_cv(raw_data, "Sampo Koski", "sales@wirokit.com", "+358 12 345 6789")
+    generate_professional_cv(
+        raw_data, "Sampo Koski", "sales@wirokit.com", "+358 12 345 6789"
+    )

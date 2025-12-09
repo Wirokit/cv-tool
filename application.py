@@ -4,7 +4,6 @@ import uuid
 from flask import Flask, request, jsonify, send_from_directory, session
 from werkzeug.utils import secure_filename
 from google import genai
-""" from dotenv import load_dotenv """
 from cv_generator import generate_professional_cv
 import boto3
 import botocore
@@ -15,10 +14,11 @@ import json
 import threading
 
 # --- Environment ---
-""" load_dotenv() """
+""" from dotenv import load_dotenv
+load_dotenv() """
 
 # Create a Flask application
-application = Flask(__name__, static_url_path='/static')
+application = Flask(__name__, static_url_path="/static")
 
 # Define upload and processed directories
 # os.path.dirname(__file__) gets the directory this script is in
@@ -32,8 +32,8 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 # Application config
 application.config.from_mapping(
-    SECRET_KEY = os.environ['SECRET_FLASK_KEY'],
-    MAX_CONTENT_LENGTH = 50 * 1024 * 1024, # Set a max file size (e.g., 50MB)
+    SECRET_KEY=os.environ["SECRET_FLASK_KEY"],
+    MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # Set a max file size (e.g., 50MB)
 )
 
 # Define allowed file extensions
@@ -46,22 +46,23 @@ prompt = open("prompt.txt", "r").read()
 # Create an S3 client.
 s3 = boto3.client("s3")
 
+
 # Start cleanup script - Runs every 24h
 def cleanup():
     # Don't run cleanup in development
-    if os.environ.get('DEBUG_MODE') == "TRUE":
+    if os.environ.get("DEBUG_MODE") == "TRUE":
         return
-    
+
     print("Starting cleanup process")
     records_cleaned = 0
 
     # Connect to an RDS database
     conn = psycopg2.connect(
-        host=os.environ.get('RDS_HOSTNAME'),
-        database=os.environ.get('RDS_DB_NAME'),
-        user=os.environ.get('RDS_USERNAME'),
-        password=os.environ.get('RDS_PASSWORD'),
-        port=os.environ.get('RDS_PORT')
+        host=os.environ.get("RDS_HOSTNAME"),
+        database=os.environ.get("RDS_DB_NAME"),
+        user=os.environ.get("RDS_USERNAME"),
+        password=os.environ.get("RDS_PASSWORD"),
+        port=os.environ.get("RDS_PORT"),
     )
     cur = conn.cursor()
 
@@ -69,13 +70,17 @@ def cleanup():
     register_uuid()
 
     # Fetch a db entry based on provided user id
-    cur.execute(f"SELECT id FROM cv WHERE date_created < now() - interval '{os.environ.get('RETENTION_DAYS')}' day")
-    
+    cur.execute(
+        f"SELECT id FROM cv WHERE date_created < now() - interval '{os.environ.get('RETENTION_DAYS')}' day"
+    )
+
     expired_records = cur.fetchall()
     for record in expired_records:
         fileName = f"{str(record[0])}.html"
         # Delete from S3
-        s3.delete_object(Bucket=os.environ.get('S3_BUCKET_NAME'), Key=f"cv_html/{fileName}")
+        s3.delete_object(
+            Bucket=os.environ.get("S3_BUCKET_NAME"), Key=f"cv_html/{fileName}"
+        )
         # Delete from local memory
         if os.path.exists(f"processed_files/{fileName}"):
             os.remove(f"processed_files/{fileName}")
@@ -86,13 +91,16 @@ def cleanup():
 
     # Commit changes
     conn.commit()
-    
+
     # Close connection
     cur.close()
     conn.close()
 
     print(f"Cleaned up {records_cleaned} records")
     threading.Timer(86400, cleanup).start()
+
+
+# Start cleanup cycle on boot
 cleanup()
 
 
@@ -105,20 +113,26 @@ def get_user_record(user, column="*"):
     try:
         # Connect to an RDS database
         conn = psycopg2.connect(
-            host=os.environ.get('RDS_HOSTNAME'),
-            database=os.environ.get('RDS_DB_NAME'),
-            user=os.environ.get('RDS_USERNAME'),
-            password=os.environ.get('RDS_PASSWORD'),
-            port=os.environ.get('RDS_PORT')
+            host=os.environ.get("RDS_HOSTNAME"),
+            database=os.environ.get("RDS_DB_NAME"),
+            user=os.environ.get("RDS_USERNAME"),
+            password=os.environ.get("RDS_PASSWORD"),
+            port=os.environ.get("RDS_PORT"),
         )
         cur = conn.cursor()
 
         # Fetch a db entry based on provided user id
         query = "SELECT %s FROM users WHERE id = %s"
-        cur.execute(query, (AsIs(column), user,))
-        
+        cur.execute(
+            query,
+            (
+                AsIs(column),
+                user,
+            ),
+        )
+
         user_record = cur.fetchone()
-        
+
         # Close connection
         cur.close()
         conn.close()
@@ -127,12 +141,12 @@ def get_user_record(user, column="*"):
     except Exception as e:
         print(f"Error fetching user: {e}")
         return None
-    
+
 
 def session_is_valid(session):
     valid_session = False
 
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if user_id:
         user_data = get_user_record(user_id, "is_disabled")
         if user_data and not user_data[0]:
@@ -185,9 +199,11 @@ def upload_file():
     # 1. Check if a file was sent
     if "file" not in request.files:
         return jsonify({"success": False, "error": "No file part in the request."}), 400
-    
+
     # Get contact data for the current user
-    contact_data = get_user_record(session.get('user_id'), "contact_name, contact_email, contact_phone")
+    contact_data = get_user_record(
+        session.get("user_id"), "contact_name, contact_email, contact_phone"
+    )
 
     file = request.files["file"]
     first_name_only = request.values["firstNameOnly"]
@@ -209,18 +225,18 @@ def upload_file():
             ),
             400,
         )
-    
+
     # Prompt settings
     prompt_preferences = ""
-    if first_name_only == 'true':
+    if first_name_only == "true":
         prompt_preferences += " Only take the first name."
     if keyword_list != "":
-        keyword_list = keyword_list.replace('```', '')
+        keyword_list = keyword_list.replace("```", "")
         prompt_preferences += f" Highlight skills relevant for the following job: ```\n{keyword_list}\n```"
     else:
         prompt_preferences += " Leave the 'highlightSkills' list empty."
 
-    updated_prompt = prompt.replace('{p}', prompt_preferences)
+    updated_prompt = prompt.replace("{p}", prompt_preferences)
 
     if file:
         # 4. Secure the filename (prevents directory traversal attacks)
@@ -260,20 +276,24 @@ def upload_file():
                 contact_email=contact_data[1],
                 contact_phone=contact_data[2],
                 output_filename=processed_filepath,
-                profile_extra_text=profile_text
+                profile_extra_text=profile_text,
             )
 
             # Upload HTML file to S3
-            with open(processed_filepath, 'rb') as data:
-                s3.upload_fileobj(data, os.environ.get('S3_BUCKET_NAME'), f"cv_html/{processed_filename}")
+            with open(processed_filepath, "rb") as data:
+                s3.upload_fileobj(
+                    data,
+                    os.environ.get("S3_BUCKET_NAME"),
+                    f"cv_html/{processed_filename}",
+                )
 
             # Log new CV to the database
             conn = psycopg2.connect(
-                host=os.environ.get('RDS_HOSTNAME'),
-                database=os.environ.get('RDS_DB_NAME'),
-                user=os.environ.get('RDS_USERNAME'),
-                password=os.environ.get('RDS_PASSWORD'),
-                port=os.environ.get('RDS_PORT')
+                host=os.environ.get("RDS_HOSTNAME"),
+                database=os.environ.get("RDS_DB_NAME"),
+                user=os.environ.get("RDS_USERNAME"),
+                password=os.environ.get("RDS_PASSWORD"),
+                port=os.environ.get("RDS_PORT"),
             )
             cur = conn.cursor()
 
@@ -287,7 +307,7 @@ def upload_file():
             """
             cur.execute(query, (file_id, json_data["name"]))
             conn.commit()
-            
+
             # Close connection
             cur.close()
             conn.close()
@@ -332,7 +352,7 @@ def view_file(file_id):
     valid_session = session_is_valid(session)
     if not valid_session:
         return jsonify({"success": False, "error": "Access forbidden."}), 403
-    
+
     try:
         # Securely build the filename
         filename = f"{secure_filename(file_id)}.html"
@@ -341,7 +361,9 @@ def view_file(file_id):
         filepath = os.path.join(PROCESSED_FOLDER, filename)
         if not os.path.exists(filepath):
             # Download the file from S3
-            s3.download_file(os.environ.get('S3_BUCKET_NAME'), f"cv_html/{filename}", filepath)
+            s3.download_file(
+                os.environ.get("S3_BUCKET_NAME"), f"cv_html/{filename}", filepath
+            )
 
         # Send the file from the 'processed_files' directory
         return send_from_directory(
@@ -350,7 +372,7 @@ def view_file(file_id):
             as_attachment=False,  # Set to True to force download
         )
     except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "404":
+        if e.response["Error"]["Code"] == "404":
             return "File not found.", 404
         else:
             print(f"Error serving file: {e}")
@@ -358,7 +380,7 @@ def view_file(file_id):
     except Exception as e:
         print(f"Error serving file: {e}")
         return "An error occurred.", 500
-    
+
 
 # --- Endpoint 3: Login ---
 
@@ -368,19 +390,19 @@ def check_login():
     # Ensure that data was sent
     if not request.values["user"] or not request.values["password"]:
         return jsonify({"success": False, "error": "Empty body."}), 400
-    
+
     # Get db entry based on given user id
-    user_record = get_user_record(request.values["user"], 'password')
+    user_record = get_user_record(request.values["user"], "password")
 
     # Check that password matches
     if user_record:
         stored_password = user_record[0]
-        
+
         # Compare passwords - UNHASHED
         password_correct = request.values["password"] == stored_password
 
         if password_correct:
-            session['user_id'] = request.values["user"]
+            session["user_id"] = request.values["user"]
             return jsonify({"success": True})
         else:
             return jsonify({"success": False})
@@ -393,4 +415,4 @@ def check_login():
 if __name__ == "__main__":
     # Run the app.
     # 'debug=True' is great for development as it auto-reloads.
-    application.run(debug=os.environ.get('DEBUG_MODE') == "TRUE", host="0.0.0.0")
+    application.run(debug=os.environ.get("DEBUG_MODE") == "TRUE", host="0.0.0.0")

@@ -15,6 +15,6 @@
 --- DB Reliant ---<br/>
 ✅ Database integraatio<br/>
 ✅ CV poisto 14 vuorokauden jälkeen<br/>
-❌ Logi - linkki on avattu<br/>
+❓ Logi - linkki on avattu (Toistaiseksi turha)<br/>
 ❌ CV lista<br/>
 ✅ Käyttäjätunnukset - CVn yhteystiedot käyttäjän mukaan<br/>
