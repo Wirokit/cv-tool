@@ -48,6 +48,10 @@ s3 = boto3.client("s3")
 
 # Start cleanup script - Runs every 24h
 def cleanup():
+    # Don't run cleanup in development
+    if os.environ.get('DEBUG_MODE') == "TRUE":
+        return
+    
     print("Starting cleanup process")
     records_cleaned = 0
 
