@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
+    <title>CV Tool - List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom styles -->
+    <style>
+      .card {
+        box-shadow:
+          0 0 20px 0 rgb(0 0 0 / 0.1),
+          0 0 20px 0 rgb(0 0 0 / 0.1);
+      }
+
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 0;
+      }
+      td > *,
+      th > * {
+        display: inline-block;
+        width: 100%;
+        padding: 8px;
+      }
+      tr:nth-child(even) {
+        background-color: #dddddda9;
+      }
+
+      label > a {
+        color: #3b82f6 !important;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-100 flex items-center justify-center min-h-screen text-slate-800 font-sans"
+  >
+    <div class="w-full max-w-5xl p-6">
+      <div class="flex flex-col items-start">
+        <a
+          href="/"
+          class="flex justify-center items-center mb-4 text-xl text-pink-600"
+        >
+          <i data-lucide="chevron-left" class="w-8 h-8"></i> <b>CV Tool</b>
+        </a>
+
+        <!-- Card Container -->
+        <div
+          class="card w-full bg-white rounded-2xl overflow-hidden border border-slate-200 p-6"
+        >
+          <!-- Header -->
+          <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Processed CVs</h1>
+            <p class="text-gray-500 mt-2">
+              View CVs created with this tool.<br />
+              <!-- <b>Deleting a CV is permanent.</b> -->
+            </p>
+          </div>
+
+          <div id="loading-spinner">
+            <svg
+              class="animate-spin h-8 w-8 text-blue-600 mx-auto"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+
+          <table id="cv-table" class="hidden">
+            <tr>
+              <th></th>
+              <th><p>Owner</p></th>
+              <th><p>Date Created</p></th>
+              <th><p>ID</p></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Icons
+      lucide.createIcons();
+
+      const loadingSpinner = document.getElementById("loading-spinner");
+      const cvTable = document.getElementById("cv-table");
+
+      (async () => {
+        try {
+          // Fetch the CV list from the backend
+          const response = await fetch("/api/cv", {
+            method: "GET",
+          });
+          json = await response.json();
+          rows = json["data"];
+
+          rows.forEach((row, i) => {
+            const rowNode = cvTable.insertRow();
+            rowNode.innerHTML = `
+              <tr>
+                <td>
+                  <label for="row-${i}" class="flex justify-center">
+                    <input id="row-${i}" type="checkbox" />
+                  </label>
+                </td>
+                <td><label for="row-${i}">${row["data_owner"]}</label></td>
+                <td><label for="row-${i}">${new Date(row["date_created"]).toLocaleString()}</label></td>
+                <td>
+                  <label for="row-${i}">
+                    <a href="/view/${row["id"]}" target="_blank">${row["id"]}</a>
+                  </label>
+                </td>
+              </tr>
+            `;
+          });
+
+          loadingSpinner.classList.add("hidden");
+          cvTable.classList.remove("hidden");
+        } catch (e) {
+          console.error(e);
+        }
+      })();
+    </script>
+  </body>
+</html>
