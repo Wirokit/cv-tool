@@ -1,5 +1,5 @@
 <!-- Base file created by Gemini AI -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -15,7 +15,9 @@
     <style>
       /* 2. Add custom styling for the file input */
       .card {
-        box-shadow: 0 0 20px 0 rgb(0 0 0 / 0.1), 0 0 20px 0 rgb(0 0 0 / 0.1);
+        box-shadow:
+          0 0 20px 0 rgb(0 0 0 / 0.1),
+          0 0 20px 0 rgb(0 0 0 / 0.1);
       }
       .file-input-wrapper {
         margin-bottom: 0;
@@ -311,7 +313,7 @@
         }
 
         const firstNameOnly = settings.querySelector(
-          "input.first-name-check"
+          "input.first-name-check",
         ).checked;
 
         // --- Start Loading State ---
@@ -352,7 +354,7 @@
             // Handle backend error
             displayMessage(
               result.error || "An unknown error occurred on the server.",
-              "error"
+              "error",
             );
           }
         } catch (error) {
@@ -360,7 +362,7 @@
           console.error("Upload Error:", error);
           displayMessage(
             "Failed to connect to the server. Please try again.",
-            "error"
+            "error",
           );
         } finally {
           // --- End Loading State ---

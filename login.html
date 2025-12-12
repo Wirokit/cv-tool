@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,7 +11,9 @@
     <!-- Custom styles -->
     <style>
       .card {
-        box-shadow: 0 0 20px 0 rgb(0 0 0 / 0.1), 0 0 20px 0 rgb(0 0 0 / 0.1);
+        box-shadow:
+          0 0 20px 0 rgb(0 0 0 / 0.1),
+          0 0 20px 0 rgb(0 0 0 / 0.1);
       }
     </style>
   </head>
@@ -145,7 +147,7 @@
         passwordInput.classList.remove(
           "border-red-500",
           "focus:ring-red-500",
-          "focus:border-red-500"
+          "focus:border-red-500",
         );
 
         const username = usernameInput.value;
@@ -175,7 +177,7 @@
             passwordInput.classList.add(
               "border-green-500",
               "focus:ring-green-500",
-              "focus:border-green-500"
+              "focus:border-green-500",
             );
             submitBtn.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Verified</span>`;
             lucide.createIcons();
@@ -186,7 +188,7 @@
             passwordInput.classList.add(
               "border-red-500",
               "focus:ring-red-500",
-              "focus:border-red-500"
+              "focus:border-red-500",
             );
 
             // Reset button
@@ -197,7 +199,7 @@
             form.classList.add("animate-[shake_0.5s_ease-in-out]");
             setTimeout(
               () => form.classList.remove("animate-[shake_0.5s_ease-in-out]"),
-              500
+              500,
             );
           }
         } catch (error) {
@@ -205,7 +207,7 @@
           console.error("Login Error:", error);
           displayMessage(
             "Failed to connect to the server. Please try again.",
-            "error"
+            "error",
           );
         } finally {
           // --- End Loading State ---
