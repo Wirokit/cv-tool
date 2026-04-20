@@ -153,28 +153,28 @@ def extract_cv(cv_data, first_name_only=True):
     json = _query_bedrock_for_json(prompt)
 
     return CV_data(
-        name=json["name"],
-        title=json["title"],
-        profile_texts=json["profile_texts"],
-        skills=json["skills"],
+        name=json.get("name", ""),
+        title=json.get("title", ""),
+        profile_texts=json.get("profile_texts", []),
+        skills=json.get("skills", []),
         highlight_skills=[],
         job_experience=[
             CV_experience(
-                title=experience["title"],
-                company_name=experience["company_name"],
-                time_period=experience["time_period"],
-                description=experience["description"],
+                title=experience.get("title", ""),
+                company_name=experience.get("company_name", ""),
+                time_period=experience.get("time_period", ""),
+                description=experience.get("description", ""),
             )
-            for experience in json["job_experience"]
+            for experience in json.get("job_experience", [])
         ],
         education=[
             CV_education(
-                degree=education["degree"],
-                school=education["school"],
-                time_period=education["time_period"],
-                description=education["description"],
+                degree=education.get("degree", ""),
+                school=education.get("school", ""),
+                time_period=education.get("time_period", ""),
+                description=education.get("description", ""),
             )
-            for education in json["education"]
+            for education in json.get("education", [])
         ],
     )
 
